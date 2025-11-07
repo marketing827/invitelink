@@ -8,65 +8,131 @@
   <style>
     :root{
       --bg:#F3E6FF;
-      --card:#9D4EDD;
-      --primary:#5A189A;
-      --icon:#FF9000;
+      --panel:#ffffff;     /* card branco (como no mock) */
+      --card:#9D4EDD;      /* ainda usamos nos destaques */
+      --primary:#5A189A;   /* títulos e elementos principais */
+      --icon:#FF9000;      /* ícones */
       --text:#2b2b2b;
-      --radius:20px;
+      --muted:rgba(0,0,0,.60);
+      --radius:16px;       /* mais próximo do mock */
+      --radius-lg:20px;
+      --input-bg:#F3E6FF;  /* inputs lavanda */
+      --input-br:#E6D4FF;  /* borda suave */
     }
+
+    /* corpo transparente para se ajustar ao fundo do Framer */
     html,body{height:100%;}
     body{
-      margin:0; display:flex; align-items:center; justify-content:center;
-      background:var(--bg);
+      margin:0; background:transparent;
       font-family:"Uncut Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color:var(--text);
+      color:var(--text); display:flex; align-items:center; justify-content:center;
     }
-    #entre-invite-widget{
-      width:min(720px, 92vw); margin:20px; padding:24px; background:var(--bg); border-radius:var(--radius);
+
+    /* painel branco “cartão” como no print */
+    .panel{
+      width:min(560px, 92vw);
+      background:var(--panel);
+      border-radius:24px;
+      padding:28px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.18);
     }
-    .title{ color:var(--primary); margin:0 0 16px; font-size:clamp(20px,2.6vw,28px); font-weight:800;}
-    .label{ display:block; margin:12px 0 6px; color:var(--primary); font-weight:750;}
-    .input{width:100%;padding:12px 14px;border:2px solid rgba(90,24,154,.18);border-radius:14px;outline:none;font-size:16px;background:#fff;font-family:inherit;}
-    .input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(90,24,154,.12);}
-    .btn{margin-top:16px;width:100%;padding:14px 16px;border:0;border-radius:14px;background:linear-gradient(135deg,var(--primary),#7b2cbf);color:#fff;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit;}
-    .card{margin-top:18px;padding:18px;border-radius:var(--radius);background:var(--card);color:#fff;box-shadow:0 8px 30px rgba(0,0,0,.1);opacity:0;transform:translateY(20px);transition:opacity .4s ease,transform .4s ease;}
-    .card.visible{opacity:1;transform:translateY(0);}
-    .row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed rgba(255,255,255,.25);}
-    .row:last-child{border-bottom:0;}
-    .k{opacity:.9;font-weight:750;}
-    .v a{color:#fff;text-decoration:underline;}
-    .share-ctas{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;}
-    .share-btn{display:inline-flex;align-items:center;gap:10px;background:#fff;color:var(--text);border:2px solid var(--icon);border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;}
-    .share-btn.ghost{background:transparent;color:#fff;border-color:#fff;}
-    .share-btn:hover{transform:translateY(-1px);}
-    .share-btn[disabled]{opacity:.6;cursor:not-allowed;}
-    .share-btn .ico{width:18px;height:18px;fill:var(--icon);}
-    .toast{margin-top:12px;padding:12px 14px;border-radius:14px;background:#fff;color:var(--text);border-left:6px solid var(--icon);box-shadow:0 6px 18px rgba(0,0,0,.08);transform:translateY(8px);opacity:0;transition:opacity .25s ease, transform .25s ease;}
-    .toast.show{transform:translateY(0);opacity:1;}
-    .label::before{content:"◆";color:var(--icon);margin-right:6px;}
-    /* Remove outline do iframe host em navegadores antigos */
-    :focus { outline-color: #5A189A; }
+
+    .title{
+      color:var(--primary);
+      margin:4px 0 12px;
+      font-size:clamp(22px,2.8vw,30px);
+      line-height:1.2; font-weight:900;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      margin:0 0 18px; color:var(--muted);
+      font-size:14px; line-height:1.5;
+    }
+
+    .label{ display:block; margin:12px 0 6px; color:#4b3a86; font-weight:750; }
+    .input{
+      width:100%; padding:14px 14px;
+      border:2px solid var(--input-br);
+      border-radius:12px; outline:none; font-size:16px;
+      background:var(--input-bg); color:var(--text); font-family:inherit;
+    }
+    .input::placeholder{ color:rgba(0,0,0,.35); }
+    .input:focus{ border-color:#cbb2ff; box-shadow:0 0 0 3px rgba(90,24,154,.10); }
+
+    .btn{
+      margin-top:18px; width:100%; padding:14px 16px; border:0; border-radius:12px;
+      background:linear-gradient(135deg, var(--primary), #7b2cbf);
+      color:#fff; font-weight:900; font-size:16px; cursor:pointer; font-family:inherit;
+    }
+    .btn:hover{ filter:brightness(1.05); }
+
+    /* bloco dos dados (retorno) */
+    .card{
+      margin-top:6px; padding:18px; border-radius:var(--radius-lg);
+      background:var(--card); color:#fff; box-shadow:0 8px 30px rgba(0,0,0,.1);
+      opacity:0; transform:translateY(20px);
+      transition:opacity .4s ease, transform .4s ease;
+    }
+    .card.visible{ opacity:1; transform:translateY(0); }
+    .card-title{ margin:0 0 8px; font-size:18px; font-weight:900; letter-spacing:.2px; }
+    .row{
+      display:flex; justify-content:space-between; gap:12px;
+      padding:10px 0; border-bottom:1px dashed rgba(255,255,255,.25);
+      font-size:15px;
+    }
+    .row:last-child{ border-bottom:0; }
+    .k{ opacity:.9; font-weight:750; }
+    .v a{ color:#fff; text-decoration:underline; word-break:break-all; }
+
+    .share-ctas{ margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; }
+    .share-btn{
+      display:inline-flex; align-items:center; gap:10px;
+      background:#fff; color:var(--text);
+      border:2px solid var(--icon); border-radius:12px; padding:10px 14px;
+      font-weight:800; cursor:pointer; transition:transform .02s ease-in;
+    }
+    .share-btn:hover{ transform:translateY(-1px); }
+    .share-btn[disabled]{ opacity:.6; cursor:not-allowed; }
+    .share-btn .ico{ width:18px; height:18px; fill:var(--icon); }
+    .share-btn.ghost{ background:transparent; color:#fff; border-color:#fff; }
+
+    .toast{
+      margin-top:12px; padding:12px 14px; border-radius:12px; background:#fff; color:var(--text);
+      border-left:6px solid var(--icon); box-shadow:0 6px 18px rgba(0,0,0,.08);
+      transform: translateY(8px); opacity: 0;
+      transition: opacity .25s ease, transform .25s ease;
+      font-size:14px;
+    }
+    .toast.show{ transform:translateY(0); opacity:1; }
+
+    .label::before{ content:"◆"; color:var(--icon); margin-right:6px; }
+    .hidden{ display:none !important; }
   </style>
 </head>
 <body>
-  <div id="entre-invite-widget">
+  <div class="panel">
+    <!-- FORMULÁRIO -->
     <form id="invite-form" autocomplete="off" novalidate>
+      <!-- honeypot anti-bot -->
       <input type="text" name="nick" id="nick" style="display:none" tabindex="-1" autocomplete="off">
-      <h2 class="title">Consultar link de indicação</h2>
+
+      <h2 class="title">Gerar link meu de indicação</h2>
+      <p class="subtitle">Insira seus dados abaixo para encontrar seu link de convite exclusivo.</p>
 
       <label class="label" for="cpf">CPF</label>
       <input class="input" id="cpf" name="cpf" inputmode="numeric" placeholder="000.000.000-00" required>
 
-      <label class="label" for="phone">Telefone (WhatsApp)</label>
-      <input class="input" id="phone" name="phone" inputmode="numeric" placeholder="(DDD) 9 XXXX-XXXX" required>
+      <label class="label" for="phone">Número de Telefone</label>
+      <input class="input" id="phone" name="phone" inputmode="numeric" placeholder="(22) 91234-5678" required>
 
-      <button class="btn" type="submit" aria-label="Consultar">Consultar</button>
+      <button class="btn" type="submit" aria-label="Consultar">Gerar Link</button>
     </form>
 
-    <section id="result" class="card" hidden>
-      <h3 class="card-title">Resultado</h3>
+    <!-- DADOS (RETORNO) -->
+    <section id="result" class="card hidden" aria-live="polite">
+      <h3 class="card-title">Dados</h3> <!-- (2) título alterado -->
       <div class="row"><span class="k">Cliente</span><span class="v" id="r-nome">—</span></div>
-      <div class="row"><span class="k">Telefone</span><span class="v" id="r-fone">—</span></div>
+      <!-- (3) telefone removido -->
       <div class="row"><span class="k">Clicks</span><span class="v" id="r-clicks">—</span></div>
       <div class="row"><span class="k">Convidados</span><span class="v" id="r-convidados">—</span></div>
       <div class="row">
@@ -79,14 +145,14 @@
       <div class="share-ctas">
         <button id="share-whatsapp" class="share-btn" type="button" disabled aria-disabled="true">
           <svg viewBox="0 0 24 24" class="ico" aria-hidden="true">
-            <path d="M20.5 3.5A11 11 0 0 0 3.3 18.6L2 22l3.6-1.2A11 11 0 1 0 20.5 3.5Zm-8.5 17a9 9 0 0 1-4.6-1.3l-.3-.2-2.7.9.9-2.6-.2-.3a9 9 0 1 1 6.9 3.5Zm5-6.6c-.3-.2-1.6-.8-1.8-.9s-.4-.1-.6.1-.7.9-.9 1.1c-.2.2-.3.2-.6.1s-1.3-.5-2.4-1.5c-.9-.8-1.5-1.8-1.7-2.1s0-.5.1-.6l.5-.6c.1-.2.2-.3.3-.5.1-.2.1-.4 0-.5S9 6.8 8.8 6.3C8.6 6 8.4 6 8.2 6H7.7c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.1s1 2.4 1.1 2.6c.1.2 2 3.1 5 4.3.7.3 1.2.5 1.7.6.7.2 1.3.2 1.7.1.5-.1 1.6-.6 1.8-1.2.2-.6.2-1.1.1-1.2s-.2-.2-.5-.4Z"/>
+            <path d="M20.5 3.5A11 11 0 0 0 3.3 18.6L2 22l3.6-1.2A11 11 0 1 0 20.5 3.5Zm-8.5 17a9 9 0 0 1-4.6-1.3l-.3-.2-2.7.9.9-2.6-.2-.3a9 9 0 1 1 6.9 3.5Zm5-6.6c-.3-.2-1.6-.8-1.8-.9s-.4-.1-.6.1-.7.9-.9 1.1c-.2.2-.3.2-.6.1s-1.3-.5-2.4-1.5c-.9-.8-1.5-1.8-1.7-2.1s0-.5.1-.6l.5-.6c.1-.2.2-.3.3-.5.1-.2.1-.4 0-.5S9 6.8 8.8 6.3C8.6 6 8.4 6 8.2 6H7.7c-.2 0 -.5.1-.7.3-.2.3-.9.9-.9 2.1s1 2.4 1.1 2.6c.1.2 2 3.1 5 4.3.7.3 1.2.5 1.7.6.7.2 1.3.2 1.7.1.5-.1 1.6-.6 1.8-1.2.2-.6.2-1.1.1-1.2s-.2-.2-.5-.4Z"/>
           </svg>
           Compartilhar no WhatsApp
         </button>
 
         <button id="copy-link" class="share-btn ghost" type="button" disabled aria-disabled="true">
           <svg viewBox="0 0 24 24" class="ico" aria-hidden="true">
-            <path d="M16 1H4a2 2 0 0 0-2 2v12h2V3h12V1Zm3 4H8a 2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Zm0 16H8V7h11v14Z"/>
+            <path d="M16 1H4a2 2 0 0 0-2 2v12h2V3h12V1Zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Zm0 16H8V7h11v14Z"/>
           </svg>
           Copiar link
         </button>
@@ -101,17 +167,17 @@
     const $=s=>document.querySelector(s);
     const form=$("#invite-form"), toast=$("#feedback"), card=$("#result"),
           shareBtn=$("#share-whatsapp"), copyBtn=$("#copy-link");
-    const out={nome:$("#r-nome"),fone:$("#r-fone"),clicks:$("#r-clicks"),convidados:$("#r-convidados"),link:$("#r-link")};
+    const out={nome:$("#r-nome"),clicks:$("#r-clicks"),convidados:$("#r-convidados"),link:$("#r-link")};
 
-    // API URL no mesmo domínio do widget (mais simples e sem CORS)
+    // se widget e API estiverem no mesmo domínio (Vercel), fica simples:
     const apiURL = window.location.origin + "/api/invite";
-    const onlyDigits=s=>String(s||"").replace(/\D+/g,"");
+    const onlyDigits=s=>String(s||"").replace(/\\D+/g,"");
 
     const cpf=$("#cpf"), phone=$("#phone");
     cpf.addEventListener("input",()=>{let v=onlyDigits(cpf.value).slice(0,11);
-      v=v.replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d{1,2})$/,"$1-$2");cpf.value=v;});
+      v=v.replace(/(\\d{3})(\\d)/,"$1.$2").replace(/(\\d{3})(\\d)/,"$1.$2").replace(/(\\d{3})(\\d{1,2})$/,"$1-$2");cpf.value=v;});
     phone.addEventListener("input",()=>{let v=onlyDigits(phone.value).slice(0,11);
-      v=v.replace(/^(\d{2})(\d)/,"($1) $2").replace(/(\d{1})(\d{4})(\d{4})$/,"$1 $2-$3");phone.value=v;});
+      v=v.replace(/^(\\d{2})(\\d)/,"($1) $2").replace(/(\\d{1})(\\d{4})(\\d{4})$/,"$1 $2-$3");phone.value=v;});
 
     function toastShow(msg, ok=false){
       toast.textContent = msg;
@@ -126,32 +192,35 @@
 
     function disableShare(){ shareBtn.disabled=true; copyBtn.disabled=true; shareBtn.onclick=copyBtn.onclick=null; }
     function enableShare(link, nome){
-      const text=`Oi! Esse é o meu link de indicação da Entre 💜\n${nome?nome+" — ":""}${link}`;
+      const text=`Oi! Esse é o meu link de indicação da Entre 💜\\n${nome?nome+" — ":""}${link}`;
       const encoded=encodeURIComponent(text);
       shareBtn.disabled=false; shareBtn.onclick=()=>window.open(`https://wa.me/?text=${encoded}`,"_blank","noopener");
-      copyBtn.disabled=false; copyBtn.onclick=async()=>{
-        try{ await navigator.clipboard.writeText(link); toastShow("Link copiado!", true); }
-        catch{ toastShow("Não foi possível copiar automaticamente. Copie o link manualmente."); }
-      };
+      copyBtn.disabled=false; copyBtn.onclick=async()=>{ try{ await navigator.clipboard.writeText(link); toastShow("Link copiado!", true);} catch{ toastShow("Não foi possível copiar automaticamente. Copie o link manualmente."); } };
     }
 
     function showResult(data){
       const nome=data?.cliente?.nome||"—";
       out.nome.textContent=nome;
-      out.fone.textContent=data?.cliente?.telefone||"—";
       out.clicks.textContent=Number.isFinite(data?.cliente?.clicks)?data.cliente.clicks:"—";
       out.convidados.textContent=Number.isFinite(data?.convidados)?data.convidados:"—";
+
       const link=data?.convite;
       if(link){ out.link.href=link; out.link.textContent="abrir link"; enableShare(link,nome); }
       else{ out.link.removeAttribute("href"); out.link.textContent="—"; disableShare(); }
-      card.hidden=false; card.classList.remove("visible"); requestAnimationFrame(()=> card.classList.add("visible"));
+
+      // (1) esconder formulário e exibir somente os dados
+      form.classList.add("hidden");
+      card.classList.remove("hidden");
+      requestAnimationFrame(()=> card.classList.add("visible"));
     }
 
     form.addEventListener("submit", async (e)=>{
       e.preventDefault(); toastHide(); card.classList.remove("visible"); disableShare();
-      const cpfNum=onlyDigits($("#cpf").value), phoneNum=onlyDigits($("#phone").value);
+
+      const cpfNum=onlyDigits(cpf.value), phoneNum=onlyDigits(phone.value);
       if(cpfNum.length!==11) return toastShow("CPF inválido.");
       if(phoneNum.length!==11) return toastShow("Telefone inválido.");
+
       try{
         const resp=await fetch(apiURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({cpf:cpfNum,phone:phoneNum,nick:""})});
         const data=await resp.json();
