@@ -8,19 +8,18 @@
   <style>
     :root{
       --bg:#F3E6FF;
-      --panel:#ffffff;     /* card branco (como no mock) */
-      --card:#9D4EDD;      /* ainda usamos nos destaques */
-      --primary:#5A189A;   /* títulos e elementos principais */
-      --icon:#FF9000;      /* ícones */
+      --panel:#ffffff;
+      --card:#9D4EDD;
+      --primary:#5A189A;
+      --icon:#FF9000;
       --text:#2b2b2b;
       --muted:rgba(0,0,0,.60);
-      --radius:16px;       /* mais próximo do mock */
+      --radius:16px;
       --radius-lg:20px;
-      --input-bg:#F3E6FF;  /* inputs lavanda */
-      --input-br:#E6D4FF;  /* borda suave */
+      --input-bg:#F3E6FF;
+      --input-br:#E6D4FF;
     }
 
-    /* corpo transparente para se ajustar ao fundo do Framer */
     html,body{height:100%;}
     body{
       margin:0; background:transparent;
@@ -28,13 +27,17 @@
       color:var(--text); display:flex; align-items:center; justify-content:center;
     }
 
-    /* painel branco “cartão” como no print */
+    /* 🔧 Garantir que nada estoure no iFrame */
+    *, *::before, *::after{ box-sizing:border-box; }
+
     .panel{
-      width:min(560px, 92vw);
+      width:100%;
+      max-width:560px;           /* limite visual */
       background:var(--panel);
       border-radius:24px;
       padding:28px;
       box-shadow: 0 10px 40px rgba(0,0,0,.18);
+      overflow:hidden;           /* previne qualquer “vazamento” */
     }
 
     .title{
@@ -49,9 +52,15 @@
       font-size:14px; line-height:1.5;
     }
 
-    .label{ display:block; margin:12px 0 6px; color:#4b3a86; font-weight:750; }
+    .label{
+      display:block; margin:12px 0 6px; color:#4b3a86; font-weight:750;
+    }
+    /* ❌ Ícones removidos */
+    /* .label::before { content:"◆"; ... }  */
+
     .input{
-      width:100%; padding:14px 14px;
+      width:100%; max-width:100%;
+      padding:14px 14px;
       border:2px solid var(--input-br);
       border-radius:12px; outline:none; font-size:16px;
       background:var(--input-bg); color:var(--text); font-family:inherit;
@@ -66,7 +75,6 @@
     }
     .btn:hover{ filter:brightness(1.05); }
 
-    /* bloco dos dados (retorno) */
     .card{
       margin-top:6px; padding:18px; border-radius:var(--radius-lg);
       background:var(--card); color:#fff; box-shadow:0 8px 30px rgba(0,0,0,.1);
@@ -105,7 +113,6 @@
     }
     .toast.show{ transform:translateY(0); opacity:1; }
 
-    .label::before{ content:"◆"; color:var(--icon); margin-right:6px; }
     .hidden{ display:none !important; }
   </style>
 </head>
@@ -113,26 +120,26 @@
   <div class="panel">
     <!-- FORMULÁRIO -->
     <form id="invite-form" autocomplete="off" novalidate>
-      <!-- honeypot anti-bot -->
       <input type="text" name="nick" id="nick" style="display:none" tabindex="-1" autocomplete="off">
 
       <h2 class="title">Gerar link meu de indicação</h2>
       <p class="subtitle">Insira seus dados abaixo para encontrar seu link de convite exclusivo.</p>
 
       <label class="label" for="cpf">CPF</label>
-      <input class="input" id="cpf" name="cpf" inputmode="numeric" placeholder="000.000.000-00" required>
+      <input class="input" id="cpf" name="cpf" inputmode="numeric" placeholder="000.000.000-00"
+             autocomplete="off" required>
 
       <label class="label" for="phone">Número de Telefone</label>
-      <input class="input" id="phone" name="phone" inputmode="numeric" placeholder="(22) 91234-5678" required>
+      <input class="input" id="phone" name="phone" inputmode="numeric" placeholder="(22) 91234-5678"
+             autocomplete="off" required>
 
       <button class="btn" type="submit" aria-label="Consultar">Gerar Link</button>
     </form>
 
-    <!-- DADOS (RETORNO) -->
+    <!-- DADOS -->
     <section id="result" class="card hidden" aria-live="polite">
-      <h3 class="card-title">Dados</h3> <!-- (2) título alterado -->
+      <h3 class="card-title">Dados</h3>
       <div class="row"><span class="k">Cliente</span><span class="v" id="r-nome">—</span></div>
-      <!-- (3) telefone removido -->
       <div class="row"><span class="k">Clicks</span><span class="v" id="r-clicks">—</span></div>
       <div class="row"><span class="k">Convidados</span><span class="v" id="r-convidados">—</span></div>
       <div class="row">
@@ -152,91 +159,4 @@
 
         <button id="copy-link" class="share-btn ghost" type="button" disabled aria-disabled="true">
           <svg viewBox="0 0 24 24" class="ico" aria-hidden="true">
-            <path d="M16 1H4a2 2 0 0 0-2 2v12h2V3h12V1Zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Zm0 16H8V7h11v14Z"/>
-          </svg>
-          Copiar link
-        </button>
-      </div>
-    </section>
-
-    <section id="feedback" class="toast" hidden role="status" aria-live="polite"></section>
-  </div>
-
-  <script>
-  (function(){
-    const $=s=>document.querySelector(s);
-    const form=$("#invite-form"), toast=$("#feedback"), card=$("#result"),
-          shareBtn=$("#share-whatsapp"), copyBtn=$("#copy-link");
-    const out={nome:$("#r-nome"),clicks:$("#r-clicks"),convidados:$("#r-convidados"),link:$("#r-link")};
-
-    // se widget e API estiverem no mesmo domínio (Vercel), fica simples:
-    const apiURL = window.location.origin + "/api/invite";
-    const onlyDigits=s=>String(s||"").replace(/\\D+/g,"");
-
-    const cpf=$("#cpf"), phone=$("#phone");
-    cpf.addEventListener("input",()=>{let v=onlyDigits(cpf.value).slice(0,11);
-      v=v.replace(/(\\d{3})(\\d)/,"$1.$2").replace(/(\\d{3})(\\d)/,"$1.$2").replace(/(\\d{3})(\\d{1,2})$/,"$1-$2");cpf.value=v;});
-    phone.addEventListener("input",()=>{let v=onlyDigits(phone.value).slice(0,11);
-      v=v.replace(/^(\\d{2})(\\d)/,"($1) $2").replace(/(\\d{1})(\\d{4})(\\d{4})$/,"$1 $2-$3");phone.value=v;});
-
-    function toastShow(msg, ok=false){
-      toast.textContent = msg;
-      toast.style.borderLeftColor = ok ? "#16a34a" : "#FF9000";
-      toast.hidden = false;
-      requestAnimationFrame(()=> toast.classList.add("show"));
-    }
-    function toastHide(){
-      toast.classList.remove("show");
-      setTimeout(()=>{ toast.hidden = true; toast.textContent = ""; }, 250);
-    }
-
-    function disableShare(){ shareBtn.disabled=true; copyBtn.disabled=true; shareBtn.onclick=copyBtn.onclick=null; }
-    function enableShare(link, nome){
-      const text=`Oi! Esse é o meu link de indicação da Entre 💜\\n${nome?nome+" — ":""}${link}`;
-      const encoded=encodeURIComponent(text);
-      shareBtn.disabled=false; shareBtn.onclick=()=>window.open(`https://wa.me/?text=${encoded}`,"_blank","noopener");
-      copyBtn.disabled=false; copyBtn.onclick=async()=>{ try{ await navigator.clipboard.writeText(link); toastShow("Link copiado!", true);} catch{ toastShow("Não foi possível copiar automaticamente. Copie o link manualmente."); } };
-    }
-
-    function showResult(data){
-      const nome=data?.cliente?.nome||"—";
-      out.nome.textContent=nome;
-      out.clicks.textContent=Number.isFinite(data?.cliente?.clicks)?data.cliente.clicks:"—";
-      out.convidados.textContent=Number.isFinite(data?.convidados)?data.convidados:"—";
-
-      const link=data?.convite;
-      if(link){ out.link.href=link; out.link.textContent="abrir link"; enableShare(link,nome); }
-      else{ out.link.removeAttribute("href"); out.link.textContent="—"; disableShare(); }
-
-      // (1) esconder formulário e exibir somente os dados
-      form.classList.add("hidden");
-      card.classList.remove("hidden");
-      requestAnimationFrame(()=> card.classList.add("visible"));
-    }
-
-    form.addEventListener("submit", async (e)=>{
-      e.preventDefault(); toastHide(); card.classList.remove("visible"); disableShare();
-
-      const cpfNum=onlyDigits(cpf.value), phoneNum=onlyDigits(phone.value);
-      if(cpfNum.length!==11) return toastShow("CPF inválido.");
-      if(phoneNum.length!==11) return toastShow("Telefone inválido.");
-
-      try{
-        const resp=await fetch(apiURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({cpf:cpfNum,phone:phoneNum,nick:""})});
-        const data=await resp.json();
-        if(!resp.ok){
-          const msg=(data?.error||"").includes("Não encontrado")
-            ? "Telefone não identificado. Confirme o número informado ou entre em contato com nossa equipe para atualizar seu cadastro."
-            : (data?.error || "Falha ao localizar. Confira os dados e tente novamente.");
-          return toastShow(msg);
-        }
-        showResult(data);
-        toastShow("Convite localizado com sucesso!", true);
-      }catch{
-        toastShow("Falha ao consultar. Tente novamente em instantes.");
-      }
-    });
-  })();
-  </script>
-</body>
-</html>
+            <path d="M16 1H4a2 2 0 0 0-2 2v12h2V3h12V1Zm3 4H8a2
