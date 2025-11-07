@@ -1,164 +1,138 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Entre • Link de Indicação</title>
-  <meta name="color-scheme" content="light only" />
-  <style>
-    /* ===== Base & reset ===== */
-    *, *::before, *::after { box-sizing: border-box; }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Entre • Link de Indicação</title>
+<meta name="color-scheme" content="light only" />
+<style>
+  /* ===== Base & reset ===== */
+  *,*::before,*::after{ box-sizing:border-box; }
 
-    :root{
-      --bg:#F3E6FF;
-      --panel:#ffffff;
-      --card:#9D4EDD;   /* destaque */
-      --primary:#5A189A;/* títulos e elementos principais */
-      --icon:#FF9000;   /* ícones gerais / bordas secundárias */
-      --text:#2b2b2b;
-      --muted:rgba(0,0,0,.60);
-      --input-bg:#F3E6FF;
-      --input-br:#E6D4FF;
-      --radius:20px;
+  :root{
+    --panel:#ffffff;
+    --card:#9D4EDD;
+    --primary:#5A189A;
+    --icon:#FF9000;
+    --text:#2b2b2b;
+    --muted:rgba(0,0,0,.60);
+    --input-bg:#F3E6FF;
+    --input-br:#E6D4FF;
 
-      /* safe areas (iOS/Android notches) */
-      --safe-l: max(16px, env(safe-area-inset-left));
-      --safe-r: max(16px, env(safe-area-inset-right));
-      --safe-t: max(12px, env(safe-area-inset-top));
-      --safe-b: max(16px, env(safe-area-inset-bottom));
-    }
+    /* safe-areas + clamp para não colar nas bordas em telas muito estreitas */
+    --pad-x: clamp(12px, 4vw, 20px);
+    --pad-y: clamp(10px, 3vh, 16px);
+    --safe-l: max(var(--pad-x), env(safe-area-inset-left));
+    --safe-r: max(var(--pad-x), env(safe-area-inset-right));
+    --safe-t: max(var(--pad-y), env(safe-area-inset-top));
+    --safe-b: max(var(--pad-y), env(safe-area-inset-bottom));
+  }
 
-    html, body { height: 100%; }
-    body{
-      margin: 0;
-      background: transparent; /* deixa ver o fundo do Framer */
-      font-family:"Uncut Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color: var(--text);
-      overflow-x: hidden; /* evita “vazamento” lateral no mobile */
-    }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    background:transparent; /* deixa o fundo do Framer aparecer */
+    font-family:"Uncut Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color:var(--text);
+    overflow-x:hidden; /* nada de scroll lateral */
+  }
 
-    /* acolchoamento interno para não “colar” nas bordas do iFrame */
-    .wrapper{
-      padding: var(--safe-t) var(--safe-r) var(--safe-b) var(--safe-l);
-    }
+  /* acolchoado que impede o card de encostar na borda do iFrame */
+  .wrapper{
+    padding: var(--safe-t) var(--safe-r) var(--safe-b) var(--safe-l);
+  }
 
-    .panel{
-      width: 100%;
-      max-width: 560px;
-      background: var(--panel);
-      border-radius: 24px;
-      padding: 28px;
-      box-shadow: 0 10px 40px rgba(0,0,0,.18);
-      margin: 0; /* topo/esquerda do iFrame */
-      overflow-wrap: anywhere;
-    }
+  .panel{
+    width:100%;
+    max-width:560px;
+    background:var(--panel);
+    border-radius:24px;
+    padding:28px;
+    box-shadow:0 10px 40px rgba(0,0,0,.18);
+    margin:0;
+    overflow-wrap:anywhere;
+  }
 
-    @media (max-width: 480px){
-      .panel{ padding: 20px; border-radius: 18px; }
-    }
+  /* micro-ajustes para telas bem estreitas */
+  @media (max-width: 380px){
+    .panel{ padding:18px; border-radius:16px; }
+    .title{ font-size:22px; }
+  }
 
-    .title{
-      color: var(--primary);
-      margin: 4px 0 12px;
-      font-size: clamp(22px,2.8vw,30px);
-      font-weight: 900;
-    }
-    .subtitle{ margin:0 0 18px; color:var(--muted); font-size:14px; line-height:1.5; }
+  .title{
+    color:var(--primary);
+    margin:4px 0 12px;
+    font-size:clamp(22px,2.8vw,30px);
+    font-weight:900;
+  }
+  .subtitle{ margin:0 0 18px; color:var(--muted); font-size:14px; line-height:1.5; }
 
-    .label{ display:block; margin:12px 0 6px; color:#4b3a86; font-weight:750; }
+  .label{ display:block; margin:12px 0 6px; color:#4b3a86; font-weight:750; }
 
-    .input{
-      display:block;
-      width:100%;
-      padding:14px 14px;
-      border:2px solid var(--input-br);
-      border-radius:12px;
-      outline:none;
-      font-size:16px;
-      background:var(--input-bg);
-      color:var(--text);
-    }
-    .input::placeholder{ color:rgba(0,0,0,.35); }
-    .input:focus{ border-color:#cbb2ff; box-shadow:0 0 0 3px rgba(90,24,154,.10); }
+  .input{
+    display:block; width:100%;
+    padding:14px 14px;
+    border:2px solid var(--input-br);
+    border-radius:12px; outline:none; font-size:16px;
+    background:var(--input-bg); color:var(--text);
+  }
+  .input::placeholder{ color:rgba(0,0,0,.35); }
+  .input:focus{ border-color:#cbb2ff; box-shadow:0 0 0 3px rgba(90,24,154,.10); }
 
-    .btn{
-      margin-top:18px;
-      width:100%;
-      padding:14px 16px;
-      border:0;
-      border-radius:12px;
-      background:linear-gradient(135deg, var(--primary), #7b2cbf);
-      color:#fff;
-      font-weight:900;
-      font-size:16px;
-      cursor:pointer;
-    }
-    .btn:hover{ filter:brightness(1.05); }
+  .btn{
+    margin-top:18px; width:100%; padding:14px 16px; border:0; border-radius:12px;
+    background:linear-gradient(135deg, var(--primary), #7b2cbf);
+    color:#fff; font-weight:900; font-size:16px; cursor:pointer;
+  }
+  .btn:hover{ filter:brightness(1.05); }
 
-    /* ===== Card de dados ===== */
-    .card{
-      margin-top:6px;
-      padding:18px;
-      border-radius:20px;
-      background:var(--card);
-      color:#fff;
-      box-shadow:0 8px 30px rgba(0,0,0,.1);
-      opacity:0;
-      transform:translateY(20px);
-      transition:opacity .4s ease, transform .4s ease;
-      overflow-wrap:anywhere;
-    }
-    .card.visible{ opacity:1; transform:translateY(0); }
-    .card-title{ margin:0 0 8px; font-size:18px; font-weight:900; letter-spacing:.2px; }
-    .row{
-      display:flex; justify-content:space-between; gap:12px;
-      padding:10px 0; border-bottom:1px dashed rgba(255,255,255,.25);
-      font-size:15px;
-    }
-    .row:last-child{ border-bottom:0; }
-    .k{ opacity:.9; font-weight:750; }
-    .v a{ color:#fff; text-decoration:underline; word-break:break-all; }
+  /* ===== Card de dados ===== */
+  .card{
+    margin-top:6px; padding:18px; border-radius:20px; background:var(--card); color:#fff;
+    box-shadow:0 8px 30px rgba(0,0,0,.1);
+    opacity:0; transform:translateY(20px);
+    transition:opacity .4s ease, transform .4s ease;
+    overflow-wrap:anywhere;
+  }
+  .card.visible{ opacity:1; transform:translateY(0); }
+  .card-title{ margin:0 0 8px; font-size:18px; font-weight:900; letter-spacing:.2px; }
+  .row{ display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px dashed rgba(255,255,255,.25); font-size:15px; }
+  .row:last-child{ border-bottom:0; }
+  .k{ opacity:.9; font-weight:750; }
+  .v a{ color:#fff; text-decoration:underline; word-break:break-all; }
 
-    .share-ctas{ margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; }
+  .share-ctas{ margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; }
 
-    /* botão WhatsApp VERDE */
-    .share-btn.whatsapp{
-      display:inline-flex; align-items:center; gap:10px;
-      background:#25D366; color:#fff;
-      border:2px solid #25D366; border-radius:12px;
-      padding:10px 14px; font-weight:800; cursor:pointer;
-    }
-    .share-btn.whatsapp .ico{ width:18px; height:18px; fill:#fff; }
-    .share-btn.whatsapp[disabled]{ opacity:.6; cursor:not-allowed; }
+  /* WhatsApp VERDE */
+  .share-btn.whatsapp{
+    display:inline-flex; align-items:center; gap:10px;
+    background:#25D366; color:#fff;
+    border:2px solid #25D366; border-radius:12px;
+    padding:10px 14px; font-weight:800; cursor:pointer;
+  }
+  .share-btn.whatsapp .ico{ width:18px; height:18px; fill:#fff; }
+  .share-btn.whatsapp[disabled]{ opacity:.6; cursor:not-allowed; }
+  .share-btn:hover{ transform:translateY(-1px); }
 
-    /* botão “Copiar link” (fantasma/branco) */
-    .share-btn.ghost{
-      display:inline-flex; align-items:center; gap:10px;
-      background:transparent; color:#fff;
-      border:2px solid #fff; border-radius:12px;
-      padding:10px 14px; font-weight:800; cursor:pointer;
-    }
-    .share-btn.ghost .ico{ width:18px; height:18px; fill:#fff; }
-    .share-btn:hover{ transform:translateY(-1px); }
-    .share-btn[disabled]{ opacity:.6; cursor:not-allowed; }
+  /* Copiar link (fantasma) */
+  .share-btn.ghost{
+    display:inline-flex; align-items:center; gap:10px;
+    background:transparent; color:#fff;
+    border:2px solid #fff; border-radius:12px;
+    padding:10px 14px; font-weight:800; cursor:pointer;
+  }
+  .share-btn.ghost .ico{ width:18px; height:18px; fill:#fff; }
+  .share-btn[disabled]{ opacity:.6; cursor:not-allowed; }
 
-    .toast{
-      margin-top:12px;
-      padding:12px 14px;
-      border-radius:12px;
-      background:#fff;
-      color:var(--text);
-      border-left:6px solid var(--icon);
-      box-shadow:0 6px 18px rgba(0,0,0,.08);
-      transform:translateY(8px);
-      opacity:0;
-      transition:opacity .25s ease, transform .25s ease;
-      font-size:14px;
-    }
-    .toast.show{ transform:translateY(0); opacity:1; }
+  .toast{
+    margin-top:12px; padding:12px 14px; border-radius:12px; background:#fff; color:var(--text);
+    border-left:6px solid var(--icon); box-shadow:0 6px 18px rgba(0,0,0,.08);
+    transform:translateY(8px); opacity:0; transition:opacity .25s ease, transform .25s ease; font-size:14px;
+  }
+  .toast.show{ transform:translateY(0); opacity:1; }
 
-    .hidden{ display:none !important; }
-  </style>
+  .hidden{ display:none !important; }
+</style>
 </head>
 <body>
   <div class="wrapper">
@@ -212,110 +186,108 @@
     </div>
   </div>
 
-  <script>
-  (function(){
-    const $=s=>document.querySelector(s);
-    const form=$("#invite-form"), toast=$("#feedback"), card=$("#result"),
-          shareBtn=$("#share-whatsapp"), copyBtn=$("#copy-link");
-    const out={nome:$("#r-nome"),clicks:$("#r-clicks"),convidados:$("#r-convidados"),link:$("#r-link")};
+<script>
+(function(){
+  const $=s=>document.querySelector(s);
+  const form=$("#invite-form"), toast=$("#feedback"), card=$("#result"),
+        shareBtn=$("#share-whatsapp"), copyBtn=$("#copy-link");
+  const out={nome:$("#r-nome"),clicks:$("#r-clicks"),convidados:$("#r-convidados"),link:$("#r-link")};
 
-    // API no mesmo domínio do widget (Vercel)
-    const apiURL = window.location.origin + "/api/invite";
-    const onlyDigits=s=>String(s||"").replace(/\\D+/g,"");
+  const apiURL = window.location.origin + "/api/invite";
+  const onlyDigits=s=>String(s||"").replace(/\D+/g,"");
 
-    const cpf=$("#cpf"), phone=$("#phone");
+  const cpf=$("#cpf"), phone=$("#phone");
 
-    // Máscaras VISUAIS (não usadas na validação)
-    cpf.addEventListener("input", () => {
-      let v = onlyDigits(cpf.value).slice(0,11);
-      v = v.replace(/(\\d{3})(\\d)/, "$1.$2")
-           .replace(/(\\d{3})(\\d)/, "$1.$2")
-           .replace(/(\\d{3})(\\d{1,2})$/, "$1-$2");
-      cpf.value = v;
-    });
+  // Máscaras VISUAIS
+  cpf.addEventListener("input", () => {
+    let v = onlyDigits(cpf.value).slice(0,11);
+    v = v.replace(/(\d{3})(\d)/, "$1.$2")
+         .replace(/(\d{3})(\d)/, "$1.$2")
+         .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    cpf.value = v;
+  });
 
-    phone.addEventListener("input", () => {
-      let v = onlyDigits(phone.value).slice(0,11);
-      v = v.replace(/^(\\d{2})(\\d)/, "($1) $2")
-           .replace(/(\\d{5})(\\d{4})$/, "$1-$2");
-      phone.value = v;
-    });
+  phone.addEventListener("input", () => {
+    let v = onlyDigits(phone.value).slice(0,11);
+    v = v.replace(/^(\d{2})(\d)/, "($1) $2")
+         .replace(/(\d{5})(\d{4})$/, "$1-$2");
+    phone.value = v;
+  });
 
-    function toastShow(msg, ok=false){
-      toast.textContent = msg;
-      toast.style.borderLeftColor = ok ? "#16a34a" : "#FF9000";
-      toast.hidden = false;
-      requestAnimationFrame(()=> toast.classList.add("show"));
-      pingHeight();
-    }
-    function toastHide(){
-      toast.classList.remove("show");
-      setTimeout(()=>{ toast.hidden = true; toast.textContent = ""; pingHeight(); }, 250);
-    }
+  function toastShow(msg, ok=false){
+    toast.textContent = msg;
+    toast.style.borderLeftColor = ok ? "#16a34a" : "#FF9000";
+    toast.hidden = false;
+    requestAnimationFrame(()=> toast.classList.add("show"));
+    pingHeight();
+  }
+  function toastHide(){
+    toast.classList.remove("show");
+    setTimeout(()=>{ toast.hidden = true; toast.textContent = ""; pingHeight(); }, 250);
+  }
 
-    function disableShare(){ shareBtn.disabled=true; copyBtn.disabled=true; shareBtn.onclick=copyBtn.onclick=null; }
-    function enableShare(link, nome){
-      const text=`Oi! Esse é o meu link de indicação da Entre 💜\\n${nome?nome+" — ":""}${link}`;
-      const encoded=encodeURIComponent(text);
-      shareBtn.disabled=false; shareBtn.onclick=()=>window.open(`https://wa.me/?text=${encoded}`,"_blank","noopener");
-      copyBtn.disabled=false; copyBtn.onclick=async()=>{ try{ await navigator.clipboard.writeText(link); toastShow("Link copiado!", true);} catch{ toastShow("Não foi possível copiar automaticamente. Copie o link manualmente."); } };
-    }
+  function disableShare(){ shareBtn.disabled=true; copyBtn.disabled=true; shareBtn.onclick=copyBtn.onclick=null; }
+  function enableShare(link, nome){
+    const text=`Oi! Esse é o meu link de indicação da Entre 💜\n${nome?nome+" — ":""}${link}`;
+    const encoded=encodeURIComponent(text);
+    shareBtn.disabled=false; shareBtn.onclick=()=>window.open(`https://wa.me/?text=${encoded}`,"_blank","noopener");
+    copyBtn.disabled=false; copyBtn.onclick=async()=>{ try{ await navigator.clipboard.writeText(link); toastShow("Link copiado!", true);} catch{ toastShow("Não foi possível copiar automaticamente. Copie o link manualmente."); } };
+  }
 
-    function showResult(data){
-      const nome=data?.cliente?.nome||"—";
-      out.nome.textContent=nome;
-      out.clicks.textContent=Number.isFinite(data?.cliente?.clicks)?data.cliente.clicks:"—";
-      out.convidados.textContent=Number.isFinite(data?.convidados)?data.convidados:"—";
+  function showResult(data){
+    const nome=data?.cliente?.nome||"—";
+    out.nome.textContent=nome;
+    out.clicks.textContent=Number.isFinite(data?.cliente?.clicks)?data.cliente.clicks:"—";
+    out.convidados.textContent=Number.isFinite(data?.convidados)?data.convidados:"—";
 
-      const link=data?.convite;
-      if(link){ out.link.href=link; out.link.textContent="abrir link"; enableShare(link,nome); }
-      else{ out.link.removeAttribute("href"); out.link.textContent="—"; disableShare(); }
+    const link=data?.convite;
+    if(link){ out.link.href=link; out.link.textContent="abrir link"; enableShare(link,nome); }
+    else{ out.link.removeAttribute("href"); out.link.textContent="—"; disableShare(); }
 
-      // Esconde formulário e exibe apenas os dados
-      form.classList.add("hidden");
-      card.classList.remove("hidden");
-      requestAnimationFrame(()=> { card.classList.add("visible"); pingHeight(); });
-    }
+    form.classList.add("hidden");
+    card.classList.remove("hidden");
+    requestAnimationFrame(()=> { card.classList.add("visible"); pingHeight(); });
+  }
 
-    form.addEventListener("submit", async (e)=>{
-      e.preventDefault(); toastHide(); card.classList.remove("visible"); disableShare();
+  form.addEventListener("submit", async (e)=>{
+    e.preventDefault(); toastHide(); card.classList.remove("visible"); disableShare();
 
-      const cpfNum   = onlyDigits(cpf.value);
-      const phoneNum = onlyDigits(phone.value);
+    const cpfNum   = onlyDigits(cpf.value);
+    const phoneNum = onlyDigits(phone.value);
 
-      if (cpfNum.length !== 11)  return toastShow("CPF inválido. Informe 11 dígitos.");
-      if (phoneNum.length !== 11) return toastShow("Telefone inválido. Informe DDD + 9 + número (11 dígitos).");
+    if (cpfNum.length !== 11)  return toastShow("CPF inválido. Informe 11 dígitos.");
+    if (phoneNum.length !== 11) return toastShow("Telefone inválido. Informe DDD + 9 + número (11 dígitos).");
 
-      try{
-        const resp = await fetch(apiURL, {
-          method:"POST",
-          headers:{ "Content-Type":"application/json" },
-          body: JSON.stringify({ cpf: cpfNum, phone: phoneNum, nick:"" })
-        });
-        const data = await resp.json();
-        if(!resp.ok){
-          const msg=(data?.error||"").includes("Não encontrado")
-            ? "Telefone não identificado. Confirme o número informado ou entre em contato com nossa equipe para atualizar seu cadastro."
-            : (data?.error || "Falha ao localizar. Confira os dados e tente novamente.");
-          return toastShow(msg);
-        }
-        showResult(data);
-        toastShow("Convite localizado com sucesso!", true);
-      }catch{
-        toastShow("Falha ao consultar. Tente novamente em instantes.");
+    try{
+      const resp = await fetch(apiURL, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ cpf: cpfNum, phone: phoneNum, nick:"" })
+      });
+      const data = await resp.json();
+      if(!resp.ok){
+        const msg=(data?.error||"").includes("Não encontrado")
+          ? "Telefone não identificado. Confirme o número informado ou entre em contato com nossa equipe para atualizar seu cadastro."
+          : (data?.error || "Falha ao localizar. Confira os dados e tente novamente.");
+        return toastShow(msg);
       }
-    });
-
-    /* ===== Auto-altura do iFrame (Framer) ===== */
-    function pingHeight(){
-      try{
-        const h = document.documentElement.scrollHeight || document.body.scrollHeight || 520;
-        window.parent.postMessage({ type:"entre:height", height:h }, "*");
-      }catch(_){}
+      showResult(data);
+      toastShow("Convite localizado com sucesso!", true);
+    }catch{
+      toastShow("Falha ao consultar. Tente novamente em instantes.");
     }
-    window.addEventListener("load", pingHeight);
-    window.addEventListener("resize", ()=> requestAnimationFrame(pingHeight));
-  })();
-  </script>
+  });
+
+  /* ===== Auto-altura do iFrame (Framer) ===== */
+  function pingHeight(){
+    try{
+      const h = document.documentElement.scrollHeight || document.body.scrollHeight || 520;
+      window.parent.postMessage({ type:"entre:height", height:h }, "*");
+    }catch(_){}
+  }
+  window.addEventListener("load", pingHeight);
+  window.addEventListener("resize", ()=> requestAnimationFrame(pingHeight));
+})();
+</script>
 </body>
 </html>
