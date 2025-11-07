@@ -1,142 +1,113 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Entre • Link de Indicação</title>
-  <meta name="color-scheme" content="light only" />
-  <style>
-    :root{
-      --bg:#F3E6FF;
-      --panel:#ffffff;
-      --card:#9D4EDD;
-      --primary:#5A189A;
-      --icon:#FF9000;
-      --text:#2b2b2b;
-      --muted:rgba(0,0,0,.60);
-      --radius:16px;
-      --radius-lg:20px;
-      --input-bg:#F3E6FF;
-      --input-br:#E6D4FF;
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Entre • Link de Indicação</title>
+<style>
+  /* ===== Reset de layout para impedir “vazamento” ===== */
+  *, *::before, *::after { box-sizing: border-box; }
 
-    html,body{height:100%;}
-    body{
-      margin:0; background:transparent;
-      font-family:"Uncut Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color:var(--text); display:flex; align-items:center; justify-content:center;
-    }
+  :root{
+    --bg:#F3E6FF;
+    --panel:#ffffff;
+    --card:#9D4EDD;
+    --primary:#5A189A;
+    --icon:#FF9000;
+    --text:#2b2b2b;
+    --muted:rgba(0,0,0,.60);
+    --input-bg:#F3E6FF;
+    --input-br:#E6D4FF;
+  }
 
-    /* 🔧 Garantir que nada estoure no iFrame */
-    *, *::before, *::after{ box-sizing:border-box; }
+  html, body { height: 100%; }
+  body{
+    margin:0; background:transparent;
+    font-family:"Uncut Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color:var(--text); display:flex; align-items:center; justify-content:center;
+  }
 
-    .panel{
-      width:100%;
-      max-width:560px;           /* limite visual */
-      background:var(--panel);
-      border-radius:24px;
-      padding:28px;
-      box-shadow: 0 10px 40px rgba(0,0,0,.18);
-      overflow:hidden;           /* previne qualquer “vazamento” */
-    }
+  /* Painel responsivo: nunca passa de 100% da largura */
+  .panel{
+    width:100%;
+    max-width:560px;
+    background:var(--panel);
+    border-radius:24px;
+    padding:28px;
+    box-shadow:0 10px 40px rgba(0,0,0,.18);
+  }
 
-    .title{
-      color:var(--primary);
-      margin:4px 0 12px;
-      font-size:clamp(22px,2.8vw,30px);
-      line-height:1.2; font-weight:900;
-      letter-spacing:.2px;
-    }
-    .subtitle{
-      margin:0 0 18px; color:var(--muted);
-      font-size:14px; line-height:1.5;
-    }
+  .title{ color:var(--primary); margin:4px 0 12px; font-size:clamp(22px,2.8vw,30px); font-weight:900; }
+  .subtitle{ margin:0 0 18px; color:var(--muted); font-size:14px; line-height:1.5; }
 
-    .label{
-      display:block; margin:12px 0 6px; color:#4b3a86; font-weight:750;
-    }
-    /* ❌ Ícones removidos */
-    /* .label::before { content:"◆"; ... }  */
+  .label{
+    display:block; margin:12px 0 6px;
+    color:#4b3a86; font-weight:750;
+  }
+  /* 🔥 Removido o ::before das labels (ícones laranja) */
 
-    .input{
-      width:100%; max-width:100%;
-      padding:14px 14px;
-      border:2px solid var(--input-br);
-      border-radius:12px; outline:none; font-size:16px;
-      background:var(--input-bg); color:var(--text); font-family:inherit;
-    }
-    .input::placeholder{ color:rgba(0,0,0,.35); }
-    .input:focus{ border-color:#cbb2ff; box-shadow:0 0 0 3px rgba(90,24,154,.10); }
+  .input{
+    display:block;
+    width:100%;
+    padding:14px 14px;
+    border:2px solid var(--input-br);
+    border-radius:12px; outline:none; font-size:16px;
+    background:var(--input-bg); color:var(--text); font-family:inherit;
+  }
+  .input:focus{ border-color:#cbb2ff; box-shadow:0 0 0 3px rgba(90,24,154,.10); }
 
-    .btn{
-      margin-top:18px; width:100%; padding:14px 16px; border:0; border-radius:12px;
-      background:linear-gradient(135deg, var(--primary), #7b2cbf);
-      color:#fff; font-weight:900; font-size:16px; cursor:pointer; font-family:inherit;
-    }
-    .btn:hover{ filter:brightness(1.05); }
+  .btn{
+    margin-top:18px; width:100%; padding:14px 16px; border:0; border-radius:12px;
+    background:linear-gradient(135deg, var(--primary), #7b2cbf);
+    color:#fff; font-weight:900; font-size:16px; cursor:pointer;
+  }
 
-    .card{
-      margin-top:6px; padding:18px; border-radius:var(--radius-lg);
-      background:var(--card); color:#fff; box-shadow:0 8px 30px rgba(0,0,0,.1);
-      opacity:0; transform:translateY(20px);
-      transition:opacity .4s ease, transform .4s ease;
-    }
-    .card.visible{ opacity:1; transform:translateY(0); }
-    .card-title{ margin:0 0 8px; font-size:18px; font-weight:900; letter-spacing:.2px; }
-    .row{
-      display:flex; justify-content:space-between; gap:12px;
-      padding:10px 0; border-bottom:1px dashed rgba(255,255,255,.25);
-      font-size:15px;
-    }
-    .row:last-child{ border-bottom:0; }
-    .k{ opacity:.9; font-weight:750; }
-    .v a{ color:#fff; text-decoration:underline; word-break:break-all; }
+  /* Retorno (mantido) */
+  .card{ margin-top:6px; padding:18px; border-radius:20px; background:var(--card); color:#fff;
+         box-shadow:0 8px 30px rgba(0,0,0,.1); opacity:0; transform:translateY(20px);
+         transition:opacity .4s ease, transform .4s ease; }
+  .card.visible{ opacity:1; transform:translateY(0); }
+  .row{ display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px dashed rgba(255,255,255,.25); }
+  .row:last-child{ border-bottom:0; }
+  .k{ opacity:.9; font-weight:750; }
+  .v a{ color:#fff; text-decoration:underline; word-break:break-all; }
 
-    .share-ctas{ margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; }
-    .share-btn{
-      display:inline-flex; align-items:center; gap:10px;
-      background:#fff; color:var(--text);
-      border:2px solid var(--icon); border-radius:12px; padding:10px 14px;
-      font-weight:800; cursor:pointer; transition:transform .02s ease-in;
-    }
-    .share-btn:hover{ transform:translateY(-1px); }
-    .share-btn[disabled]{ opacity:.6; cursor:not-allowed; }
-    .share-btn .ico{ width:18px; height:18px; fill:var(--icon); }
-    .share-btn.ghost{ background:transparent; color:#fff; border-color:#fff; }
+  .share-ctas{ margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; }
+  .share-btn{ display:inline-flex; align-items:center; gap:10px; background:#fff; color:var(--text);
+              border:2px solid var(--icon); border-radius:12px; padding:10px 14px; font-weight:800; cursor:pointer; }
+  .share-btn.ghost{ background:transparent; color:#fff; border-color:#fff; }
+  .share-btn[disabled]{ opacity:.6; cursor:not-allowed; }
 
-    .toast{
-      margin-top:12px; padding:12px 14px; border-radius:12px; background:#fff; color:var(--text);
-      border-left:6px solid var(--icon); box-shadow:0 6px 18px rgba(0,0,0,.08);
-      transform: translateY(8px); opacity: 0;
-      transition: opacity .25s ease, transform .25s ease;
-      font-size:14px;
-    }
-    .toast.show{ transform:translateY(0); opacity:1; }
+  .toast{ margin-top:12px; padding:12px 14px; border-radius:12px; background:#fff; color:var(--text);
+          border-left:6px solid var(--icon); box-shadow:0 6px 18px rgba(0,0,0,.08);
+          transform:translateY(8px); opacity:0; transition:opacity .25s ease, transform .25s ease; }
+  .toast.show{ transform:translateY(0); opacity:1; }
 
-    .hidden{ display:none !important; }
-  </style>
+  .hidden{ display:none !important; }
+</style>
 </head>
 <body>
   <div class="panel">
-    <!-- FORMULÁRIO -->
     <form id="invite-form" autocomplete="off" novalidate>
       <input type="text" name="nick" id="nick" style="display:none" tabindex="-1" autocomplete="off">
-
       <h2 class="title">Gerar link meu de indicação</h2>
       <p class="subtitle">Insira seus dados abaixo para encontrar seu link de convite exclusivo.</p>
 
       <label class="label" for="cpf">CPF</label>
-      <input class="input" id="cpf" name="cpf" inputmode="numeric" placeholder="000.000.000-00"
-             autocomplete="off" required>
+      <!-- ✅ Máscara e validação HTML -->
+      <input class="input" id="cpf" name="cpf" inputmode="numeric"
+             placeholder="000.000.000-00" required maxlength="14"
+             pattern="\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}">
 
       <label class="label" for="phone">Número de Telefone</label>
-      <input class="input" id="phone" name="phone" inputmode="numeric" placeholder="(22) 91234-5678"
-             autocomplete="off" required>
+      <!-- ✅ Máscara e validação HTML -->
+      <input class="input" id="phone" name="phone" inputmode="numeric"
+             placeholder="(22) 91234-5678" required maxlength="15"
+             pattern="\\(\\d{2}\\) \\d{5}-\\d{4}">
 
       <button class="btn" type="submit" aria-label="Consultar">Gerar Link</button>
     </form>
 
-    <!-- DADOS -->
     <section id="result" class="card hidden" aria-live="polite">
       <h3 class="card-title">Dados</h3>
       <div class="row"><span class="k">Cliente</span><span class="v" id="r-nome">—</span></div>
@@ -144,19 +115,111 @@
       <div class="row"><span class="k">Convidados</span><span class="v" id="r-convidados">—</span></div>
       <div class="row">
         <span class="k">Convite</span>
-        <span class="v link-wrap">
-          <a id="r-link" href="#" target="_blank" rel="noopener">abrir link</a>
-        </span>
+        <span class="v link-wrap"><a id="r-link" href="#" target="_blank" rel="noopener">abrir link</a></span>
       </div>
 
       <div class="share-ctas">
-        <button id="share-whatsapp" class="share-btn" type="button" disabled aria-disabled="true">
-          <svg viewBox="0 0 24 24" class="ico" aria-hidden="true">
-            <path d="M20.5 3.5A11 11 0 0 0 3.3 18.6L2 22l3.6-1.2A11 11 0 1 0 20.5 3.5Zm-8.5 17a9 9 0 0 1-4.6-1.3l-.3-.2-2.7.9.9-2.6-.2-.3a9 9 0 1 1 6.9 3.5Zm5-6.6c-.3-.2-1.6-.8-1.8-.9s-.4-.1-.6.1-.7.9-.9 1.1c-.2.2-.3.2-.6.1s-1.3-.5-2.4-1.5c-.9-.8-1.5-1.8-1.7-2.1s0-.5.1-.6l.5-.6c.1-.2.2-.3.3-.5.1-.2.1-.4 0-.5S9 6.8 8.8 6.3C8.6 6 8.4 6 8.2 6H7.7c-.2 0 -.5.1-.7.3-.2.3-.9.9-.9 2.1s1 2.4 1.1 2.6c.1.2 2 3.1 5 4.3.7.3 1.2.5 1.7.6.7.2 1.3.2 1.7.1.5-.1 1.6-.6 1.8-1.2.2-.6.2-1.1.1-1.2s-.2-.2-.5-.4Z"/>
-          </svg>
-          Compartilhar no WhatsApp
-        </button>
+        <button id="share-whatsapp" class="share-btn" type="button" disabled aria-disabled="true">Compartilhar no WhatsApp</button>
+        <button id="copy-link" class="share-btn ghost" type="button" disabled aria-disabled="true">Copiar link</button>
+      </div>
+    </section>
 
-        <button id="copy-link" class="share-btn ghost" type="button" disabled aria-disabled="true">
-          <svg viewBox="0 0 24 24" class="ico" aria-hidden="true">
-            <path d="M16 1H4a2 2 0 0 0-2 2v12h2V3h12V1Zm3 4H8a2
+    <section id="feedback" class="toast" hidden role="status" aria-live="polite"></section>
+  </div>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s);
+  const form=$("#invite-form"), toast=$("#feedback"), card=$("#result"),
+        shareBtn=$("#share-whatsapp"), copyBtn=$("#copy-link");
+  const out={nome:$("#r-nome"),clicks:$("#r-clicks"),convidados:$("#r-convidados"),link:$("#r-link")};
+  const apiURL = window.location.origin + "/api/invite";
+  const onlyDigits=s=>String(s||"").replace(/\\D+/g,"");
+
+  // ====== MÁSCARAS VISUAIS (CPF e Telefone) ======
+  const cpf=$("#cpf"), phone=$("#phone");
+
+  cpf.addEventListener("input", () => {
+    let v = onlyDigits(cpf.value).slice(0,11);
+    v = v.replace(/(\\d{3})(\\d)/, "$1.$2")
+         .replace(/(\\d{3})(\\d)/, "$1.$2")
+         .replace(/(\\d{3})(\\d{1,2})$/, "$1-$2");
+    cpf.value = v;
+  });
+
+  phone.addEventListener("input", () => {
+    let v = onlyDigits(phone.value).slice(0,11);
+    // (DD) 9XXXX-XXXX
+    v = v.replace(/^(\\d{2})(\\d)/, "($1) $2")
+         .replace(/(\\d{5})(\\d{4})$/, "$1-$2");
+    phone.value = v;
+  });
+
+  function toastShow(msg, ok=false){
+    toast.textContent = msg;
+    toast.style.borderLeftColor = ok ? "#16a34a" : "#FF9000";
+    toast.hidden = false;
+    requestAnimationFrame(()=> toast.classList.add("show"));
+  }
+  function toastHide(){
+    toast.classList.remove("show");
+    setTimeout(()=>{ toast.hidden = true; toast.textContent = ""; }, 250);
+  }
+
+  function disableShare(){ shareBtn.disabled=true; copyBtn.disabled=true; shareBtn.onclick=copyBtn.onclick=null; }
+  function enableShare(link, nome){
+    const text=`Oi! Esse é o meu link de indicação da Entre 💜\\n${nome?nome+" — ":""}${link}`;
+    const encoded=encodeURIComponent(text);
+    shareBtn.disabled=false; shareBtn.onclick=()=>window.open(`https://wa.me/?text=${encoded}`,"_blank","noopener");
+    copyBtn.disabled=false; copyBtn.onclick=async()=>{ try{ await navigator.clipboard.writeText(link); toastShow("Link copiado!", true);} catch{ toastShow("Não foi possível copiar automaticamente. Copie o link manualmente."); } };
+  }
+
+  function showResult(data){
+    const nome=data?.cliente?.nome||"—";
+    out.nome.textContent=nome;
+    out.clicks.textContent=Number.isFinite(data?.cliente?.clicks)?data.cliente.clicks:"—";
+    out.convidados.textContent=Number.isFinite(data?.convidados)?data.convidados:"—";
+
+    const link=data?.convite;
+    if(link){ out.link.href=link; out.link.textContent="abrir link"; enableShare(link,nome); }
+    else{ out.link.removeAttribute("href"); out.link.textContent="—"; disableShare(); }
+
+    // Esconde formulário e mostra só os dados
+    form.classList.add("hidden");
+    card.classList.remove("hidden");
+    requestAnimationFrame(()=> card.classList.add("visible"));
+  }
+
+  form.addEventListener("submit", async (e)=>{
+    e.preventDefault(); toastHide(); card.classList.remove("visible"); disableShare();
+
+    // Validação rápida pela máscara (antes de enviar)
+    if (!/\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}/.test(cpf.value)) return toastShow("CPF inválido. Ex.: 000.000.000-00");
+    if (!/\\(\\d{2}\\) \\d{5}-\\d{4}/.test(phone.value)) return toastShow("Telefone inválido. Ex.: (22) 91234-5678");
+
+    const cpfNum = onlyDigits(cpf.value);
+    const phoneNum = onlyDigits(phone.value);
+
+    try{
+      const resp = await fetch(apiURL, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ cpf: cpfNum, phone: phoneNum, nick:"" })
+      });
+      const data = await resp.json();
+      if(!resp.ok){
+        const msg=(data?.error||"").includes("Não encontrado")
+          ? "Telefone não identificado. Confirme o número informado ou entre em contato com nossa equipe para atualizar seu cadastro."
+          : (data?.error || "Falha ao localizar. Confira os dados e tente novamente.");
+        return toastShow(msg);
+      }
+      showResult(data);
+      toastShow("Convite localizado com sucesso!", true);
+    }catch{
+      toastShow("Falha ao consultar. Tente novamente em instantes.");
+    }
+  });
+})();
+</script>
+</body>
+</html>
