@@ -1,8 +1,15 @@
+// FIX: Imported React and ReactDOM to resolve UMD global errors, as the file is being treated as a module.
+// `createRoot` is now correctly imported from `react-dom/client` as per modern React standards.
+import React, { useState, useEffect, useCallback, StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+
 // Todo o aplicativo está neste único arquivo para máxima simplicidade.
 // Não há necessidade de build, Vite, ou configurações complexas.
-// FIX: Add imports for React and ReactDOM
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+
+// --- CONFIGURAÇÃO INICIAL DO REACT ---
+// Como o React é carregado via CDN, ele está disponível globalmente.
+// Para um código mais limpo, desestruturamos as funções que usaremos.
+
 
 // --- DEFINIÇÃO DE TIPOS ---
 interface ZapispClient {
@@ -115,9 +122,9 @@ const InvitationForm = ({ cpf, phone, onCpfChange, onPhoneChange, onSubmit, isLo
 
 // --- COMPONENTE DE RESULTADO ---
 const InvitationResult = ({ name, link, onReset }) => {
-  const [copied, setCopied] = React.useState(false);
+  const [copied, setCopied] = useState(false);
 
-  const handleCopy = React.useCallback(() => {
+  const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(link).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -159,13 +166,23 @@ const InvitationResult = ({ name, link, onReset }) => {
 
 // --- COMPONENTE PRINCIPAL DO APP ---
 const App = () => {
-  const [cpf, setCpf] = React.useState('');
-  const [phone, setPhone] = React.useState('');
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [error, setError] = React.useState(null);
-  const [invitationData, setInvitationData] = React.useState(null);
+  const [cpf, setCpf] = useState('');
+  const [phone, setPhone] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [invitationData, setInvitationData] = useState(null);
 
-  const handleReset = React.useCallback(() => {
+  useEffect(() => {
+    // Verifica se o aplicativo está sendo executado dentro de um iframe (como no Framer)
+    const isEmbedded = window.self !== window.top;
+
+    // Se NÃO estiver embutido (acesso direto via URL), adiciona um fundo para melhor visualização
+    if (!isEmbedded) {
+      document.body.style.backgroundColor = '#f3f4f6'; // Um cinza claro, similar ao bg-slate-100
+    }
+  }, []); // O array vazio [] garante que isso rode apenas uma vez, quando o componente montar
+
+  const handleReset = useCallback(() => {
     setCpf('');
     setPhone('');
     setError(null);
@@ -190,7 +207,7 @@ const App = () => {
     return true;
   };
 
-  const handleSubmit = React.useCallback(async (event) => {
+  const handleSubmit = useCallback(async (event) => {
     event.preventDefault();
     setIsLoading(true);
     setError(null);
@@ -240,7 +257,7 @@ const App = () => {
   }, [cpf, phone]);
 
   return (
-    <div className="bg-transparent flex items-center justify-center p-4">
+    <div className="bg-transparent flex items-center justify-center min-h-screen p-4">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
           <div className="px-6 py-8 sm:px-10 sm:py-10">
@@ -271,9 +288,9 @@ const App = () => {
 
 // --- RENDERIZA O APP NA PÁGINA ---
 const rootElement = document.getElementById('root');
-const root = ReactDOM.createRoot(rootElement);
+const root = createRoot(rootElement);
 root.render(
-  <React.StrictMode>
+  <StrictMode>
     <App />
-  </React.StrictMode>
+  </StrictMode>
 );
