@@ -1,5 +1,0 @@
-{
-  "name": "Zapisp Invitation Link Finder",
-  "description": "An embeddable application for clients to retrieve their Zapisp invitation link by providing their phone number. The app then provides an easy way to share the link on WhatsApp.",
-  "requestFramePermissions": []
-}
