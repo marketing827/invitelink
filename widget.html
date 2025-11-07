@@ -228,7 +228,7 @@
 
   function disableShare(){ shareBtn.disabled=true; copyBtn.disabled=true; shareBtn.onclick=copyBtn.onclick=null; }
   function enableShare(link, nome){
-    const text=`Oi! Esse é o meu link de indicação da Entre 💜\n${nome?nome+" — ":""}${link}`;
+    const text=`Oi! Quero te convidar para aproveitar a Internet Premium da Entre, basta clicar neste meu link para se cadastrar! 💜\n${link}`;
     const encoded=encodeURIComponent(text);
     shareBtn.disabled=false; shareBtn.onclick=()=>window.open(`https://wa.me/?text=${encoded}`,"_blank","noopener");
     copyBtn.disabled=false; copyBtn.onclick=async()=>{ try{ await navigator.clipboard.writeText(link); toastShow("Link copiado!", true);} catch{ toastShow("Não foi possível copiar automaticamente. Copie o link manualmente."); } };
