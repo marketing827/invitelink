@@ -1,25 +1,25 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Zapisp Invitation Link Finder</title>
+    <title>Zapisp - Gerador de Link de Convite</title>
     <!-- 1. Adiciona o Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 2. Adiciona o React e o ReactDOM via CDN -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- 2. Adiciona o React e o ReactDOM via CDN (versões UMD) -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     
-    <!-- 3. Adiciona o Babel para traduzir JSX no navegador -->
+    <!-- 3. Adiciona o Babel para traduzir JSX diretamente no navegador -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
     <style>
-      @import url('https://uncut.wtf/uncut-sans.css');
+      @import url('https://rsms.me/inter/inter.css');
+      html { font-family: 'Inter', sans-serif; }
       body {
-        font-family: 'Uncut Sans', sans-serif;
-        background-color: #f3f4f6;
+        background-color: transparent; /* Fundo transparente para incorporar em outros sites */
       }
     </style>
   <script type="importmap">
@@ -27,18 +27,16 @@
   "imports": {
     "react": "https://aistudiocdn.com/react@^19.2.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "vite": "https://aistudiocdn.com/vite@^7.2.1",
-    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.0"
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
   }
 }
 </script>
 </head>
   <body>
+    <noscript>Você precisa habilitar o JavaScript para rodar este aplicativo.</noscript>
     <div id="root"></div>
     
-    <!-- 4. Carrega o seu código React, que agora é um único arquivo -->
-    <!-- O type="text/babel" é crucial! Ele diz ao Babel para processar este arquivo. -->
+    <!-- 4. Carrega o seu código React. O type="text/babel" é crucial para o Babel funcionar! -->
     <script type="text/babel" src="index.tsx"></script>
   </body>
 </html>
