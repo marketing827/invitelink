@@ -124,6 +124,9 @@
   .share-btn.ghost .ico{ width:18px; height:18px; fill:#fff; }
   .share-btn[disabled]{ opacity:.6; cursor:not-allowed; }
 
+  /* Campo com o link, exibido só quando a cópia automática falha */
+  .link-field{ margin-top:12px; padding:10px 12px; font-size:14px; }
+
   .toast{
     margin-top:12px; padding:12px 14px; border-radius:12px; background:#fff; color:var(--text);
     border-left:6px solid var(--icon); box-shadow:0 6px 18px rgba(0,0,0,.08);
@@ -180,6 +183,8 @@
             Copiar link
           </button>
         </div>
+
+        <input id="link-field" class="input link-field hidden" type="text" readonly aria-label="Link de convite">
       </section>
 
       <section id="feedback" class="toast" hidden role="status" aria-live="polite"></section>
@@ -190,7 +195,7 @@
 (function(){
   const $=s=>document.querySelector(s);
   const form=$("#invite-form"), toast=$("#feedback"), card=$("#result"),
-        shareBtn=$("#share-whatsapp"), copyBtn=$("#copy-link");
+        shareBtn=$("#share-whatsapp"), copyBtn=$("#copy-link"), linkField=$("#link-field");
   const out={nome:$("#r-nome"),clicks:$("#r-clicks"),convidados:$("#r-convidados"),link:$("#r-link")};
 
   const apiURL = window.location.origin + "/api/invite";
@@ -226,12 +231,33 @@
     setTimeout(()=>{ toast.hidden = true; toast.textContent = ""; pingHeight(); }, 250);
   }
 
-  function disableShare(){ shareBtn.disabled=true; copyBtn.disabled=true; shareBtn.onclick=copyBtn.onclick=null; }
+  // A Clipboard API é bloqueada em iFrames sem allow="clipboard-write", em navegadores
+  // internos de apps e fora de HTTPS; nesses casos usa o método antigo (execCommand).
+  async function copyText(text){
+    try{ await navigator.clipboard.writeText(text); return true; }catch(_){}
+    const ta=document.createElement("textarea");
+    ta.value=text; ta.setAttribute("readonly","");
+    ta.style.cssText="position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;";
+    document.body.appendChild(ta);
+    ta.focus({preventScroll:true}); ta.select(); ta.setSelectionRange(0, text.length);
+    let ok=false;
+    try{ ok=document.execCommand("copy"); }catch(_){}
+    ta.remove(); copyBtn.focus({preventScroll:true});
+    return ok;
+  }
+
+  function disableShare(){ shareBtn.disabled=true; copyBtn.disabled=true; shareBtn.onclick=copyBtn.onclick=null; linkField.classList.add("hidden"); }
   function enableShare(link, nome){
     const text=`Oi! Quero te convidar para aproveitar a Internet Premium da Entre, basta clicar neste meu link para se cadastrar! 💜\n${link}`;
     const encoded=encodeURIComponent(text);
     shareBtn.disabled=false; shareBtn.onclick=()=>window.open(`https://wa.me/?text=${encoded}`,"_blank","noopener");
-    copyBtn.disabled=false; copyBtn.onclick=async()=>{ try{ await navigator.clipboard.writeText(link); toastShow("Link copiado!", true);} catch{ toastShow("Não foi possível copiar automaticamente. Copie o link manualmente."); } };
+    copyBtn.disabled=false; copyBtn.onclick=async()=>{
+      if(await copyText(link)){ linkField.classList.add("hidden"); return toastShow("Link copiado!", true); }
+      // Último recurso: mostra o link já selecionado para o usuário copiar
+      linkField.value=link; linkField.classList.remove("hidden");
+      linkField.focus({preventScroll:true}); linkField.select(); linkField.setSelectionRange(0, link.length);
+      toastShow("Não foi possível copiar automaticamente. Selecione o link acima e copie manualmente.");
+    };
   }
 
   function showResult(data){
