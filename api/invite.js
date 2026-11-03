@@ -1,7 +1,7 @@
 // api/invite.js — Vercel Serverless Function (Node 18+)
 export default async function handler(req, res) {
   // CORS: libera apenas a origem configurada (ou o domínio do Vercel, como fallback)
-  const defaultAllowed = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://indique.entre.net.br";
+  const defaultAllowed = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://pesquisas.entre.net.br";
   const allowedOrigin = process.env.ALLOWED_ORIGIN || defaultAllowed;
 
   res.setHeader("Vary", "Origin");
